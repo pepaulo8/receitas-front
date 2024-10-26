@@ -1,75 +1,20 @@
-# Nuxt Minimal Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Setup Guide for Receitas Challenge
 
-## Setup
+Para iniciar essa aplicação, você precisa dos seguintes critérios instalados:
 
-Make sure to install dependencies:
+- **npm**
 
-```bash
-# npm
-npm install
+## Configuração
 
-# pnpm
-pnpm install
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
 
-# yarn
-yarn install
+2. Inicie a aplicação em modo de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
 
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+   Agora a aplicação estará disponível na porta **3000** do seu localhost.
