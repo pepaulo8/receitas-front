@@ -2,6 +2,9 @@
   <div class="search">
     <UInput
       v-model="searchText"
+      size="lg"
+      color="primary"
+      icon="i-heroicons:magnifying-glass"
       placeholder="Pesquisar receita"
       type="text"
       @input="onInput"

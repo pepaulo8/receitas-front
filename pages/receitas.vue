@@ -3,63 +3,72 @@
   <div class="container">
     <div class="header">
       <h1>Minhas receitas</h1>
-
       <UButton
-        icon="i-heroicons-book-open"
+        icon="i-heroicons:plus-16-solid"
         @click="createRecipe"
         target="_blank"
       >
         Cadastrar receita
       </UButton>
-
-      <UModal v-model="showModal" title="Cadastro de Receita">
-        <UCard>
-          <UForm :schema="schema" :state="form" @submit="onSubmit">
-            <UFormGroup label="Nome" name="nome">
-              <UInput v-model="form.nome" />
-            </UFormGroup>
-
-            <UFormGroup label="Categoria" name="categoria">
-              <USelect
-                v-model="form.id_categorias"
-                :options="
-                  categories.map((category) => ({
-                    label: category.nome,
-                    value: category.id,
-                  }))
-                "
-              />
-            </UFormGroup>
-
-            <UFormGroup
-              label="Tempo de Preparo (minutos)"
-              name="tempo_preparo_minutos"
-            >
-              <UInput type="number" v-model="form.tempo_preparo_minutos" />
-            </UFormGroup>
-
-            <UFormGroup label="Porções" name="porcoes">
-              <UInput type="number" v-model="form.porcoes" />
-            </UFormGroup>
-
-            <UFormGroup label="Ingredientes" name="ingredientes">
-              <UTextarea v-model="form.ingredientes" />
-            </UFormGroup>
-
-            <UFormGroup label="Modo de Preparo" name="modo_preparo">
-              <UTextarea v-model="form.modo_preparo" />
-            </UFormGroup>
-            <UButton type="submit">Salvar</UButton>
-          </UForm>
-        </UCard>
-      </UModal>
-      <div></div>
     </div>
+    <UModal v-model="showModal" title="Cadastro de Receita">
+      <UCard>
+        <template #header>
+          <div style="display: flex; justify-content: space-between;">
+            <h2 style="font-weight: 600; font-size: large">
+              {{ isEditing ? 'Editar receita' : 'Cadastrar receita' }}
+            </h2>
+            <UButton icon="i-heroicons:x-mark" variant="outline" @click="onClose" />
+          </div>
+        </template>
+        
+        <UForm :schema="schema" :state="form" @submit="onSubmit" class="space-y-4">
+          <UFormGroup label="Nome" name="nome">
+            <UInput v-model="form.nome" />
+          </UFormGroup>
+
+          <UFormGroup label="Categoria" name="id_categorias">
+            <USelect
+              v-model="form.id_categorias"
+              :options="
+                categories.map((category) => ({
+                  label: category.nome,
+                  value: category.id,
+                }))
+              "
+            />
+          </UFormGroup>
+
+          <UFormGroup
+            label="Tempo de Preparo (minutos)"
+            name="tempo_preparo_minutos"
+          >
+            <UInput type="number" v-model="form.tempo_preparo_minutos" />
+          </UFormGroup>
+
+          <UFormGroup label="Porções" name="porcoes">
+            <UInput type="number" v-model="form.porcoes" />
+          </UFormGroup>
+
+          <UFormGroup label="Ingredientes" name="ingredientes">
+            <UTextarea v-model="form.ingredientes" />
+          </UFormGroup>
+
+          <UFormGroup label="Modo de Preparo" name="modo_preparo">
+            <UTextarea v-model="form.modo_preparo" />
+          </UFormGroup>
+          <div class="modal-footer">
+            <UButton type="submit">Salvar</UButton>
+          </div>
+        </UForm>
+
+        </UCard>
+    </UModal>
 
     <SearchInput @updateSearch="fetchFilteredRecipes" />
 
     <div v-if="recipesStore.recipes.length === 0">
-      <p>Nenhuma receita encontrada.</p>
+      <p style="margin-top: 5px">Nenhuma receita encontrada.</p>
     </div>
 
     <div class="recipe-list">
@@ -74,6 +83,7 @@
 </template>
 
 <script setup lang="ts">
+
 import type { FormSubmitEvent } from '#ui/types'
 import { onMounted, ref } from 'vue'
 import { number, object, string, type InferType } from 'yup'
@@ -106,6 +116,9 @@ const schema = object({
   tempo_preparo_minutos: number()
     .min(1, 'Tempo de preparo deve ser maior que zero')
     .required('Tempo de preparo é obrigatório'),
+  porcoes: number()
+    .min(1, 'Tempo de preparo deve ser maior que zero')
+    .required('Tempo de preparo é obrigatório'),
   ingredientes: string().required('Ingredientes são obrigatórios'),
   modo_preparo: string().required('Modo de preparo é obrigatório'),
 })
@@ -127,6 +140,10 @@ onMounted(async () => {
     console.error(error)
   }
 })
+
+const onClose = () => {
+  showModal.value = false
+}
 
 const fetchFilteredRecipes = (filter: string) => {
   recipesStore.fetchRecipes(filter)
@@ -164,7 +181,7 @@ const editRecipe = (recipe: Recipe) => {
 }
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  const payload = { ...event.data, id_usuarios: authStore.user?.id }
+  const payload = { ...event.data, id_usuarios: authStore.getUser().id }
   try {
     if (isEditing.value && selectedRecipeId.value) {
       await recipesStore.updateRecipe(selectedRecipeId.value, payload)
@@ -212,5 +229,10 @@ h1 {
 
 p {
   text-align: center;
+}
+
+.modal-footer {
+  display: flex; 
+  justify-content: flex-end;
 }
 </style>

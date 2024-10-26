@@ -1,17 +1,19 @@
 <template>
   <div class="auth-container">
-    <h1>{{ isRegistering ? 'Cadastrar-se' : 'Bem-vindo!' }}</h1>
+    <h1 style="margin-bottom: 10px">
+      {{ isRegistering ? 'Cadastrar-se' : 'Bem-vindo!' }}
+    </h1>
 
     <form @submit.prevent="handleSubmit">
-      <UField v-if="isRegistering" label="Nome" required>
+      <UField v-if="isRegistering" label="Nome" required class="spaceY">
         <UInput v-model="form.nome" placeholder="Digite seu nome" />
       </UField>
 
-      <UField label="Login" required>
+      <UField label="Login" required class="spaceY">
         <UInput v-model="form.login" placeholder="Digite seu login" />
       </UField>
 
-      <UField label="Senha" required>
+      <UField label="Senha" required class="spaceY">
         <UInput
           v-model="form.senha"
           type="password"
@@ -19,7 +21,12 @@
         />
       </UField>
 
-      <UField v-if="isRegistering" label="Confirmação de Senha" required>
+      <UField
+        v-if="isRegistering"
+        label="Confirmação de Senha"
+        required
+        class="spaceY"
+      >
         <UInput
           v-model="form.confirmarSenha"
           type="password"
@@ -31,7 +38,7 @@
         <UButton
           v-if="isRegistering"
           variant="outline"
-          label="Cancelar"
+          label="Fazer login"
           @click="toggleRegister"
         />
         <UButton type="submit" label="Cadastrar" v-if="isRegistering" />
@@ -50,10 +57,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { useAuth } from '~/composables/useAuth'
-import api from '~/composables/api'
+import { ref } from 'vue'
 import * as yup from 'yup'
+import api from '~/composables/api'
+import { useAuth } from '~/composables/useAuth'
 
 const form = ref({
   nome: '',
@@ -102,7 +109,11 @@ const handleSubmit = async () => {
       await login(form.value.login, form.value.senha)
     }
   } catch (error: any) {
-    errorMessage.value = error.errors ? error.errors[0] : 'Ocorreu um erro'
+    errorMessage.value = error.errors
+      ? error.errors[0]
+      : error.response.status === 401
+        ? 'Login ou senha incorretos' : error.response.status === 409 ? 'Login já existe'
+        : 'Ocorreu um erro'
   }
 }
 </script>
@@ -119,10 +130,16 @@ const handleSubmit = async () => {
   text-align: center;
 }
 
+.spaceY {
+  display: block;
+  margin-bottom: 4px;
+}
+
 .button-group {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 10px;
+  width: 100%;
 }
 
 .error-message {
